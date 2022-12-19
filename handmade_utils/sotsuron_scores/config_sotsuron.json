@@ -1,0 +1,41 @@
+{
+  "model": {
+    "entity_size": 90,
+    "hidden_size": 80,
+    "role_size": 20,
+    "init_limit": 0.10,
+    "LN": true,
+    "dnc":{"num_layers":1,"lstm_hidden":512,
+        "hidden_size":256,
+        "num_hidden_layers":1,
+        "nr_cells":256,
+        "cell_size":64,
+        "read_heads":4
+    }
+  },
+  "score_store":{
+    "steps": 1000000,
+    "epochs": 500
+  },
+  "data":{
+    "data_path": "./babi/data/en-valid-10k",
+    "task-id": "all"
+  },
+  "read_ScoreStoring":{
+  "##dirs":["SAM+dnc_model","simplerrnn_matrixinput"],
+    "read_directories": ["ntm_vlgiitr"],
+    "filename_common":"ntm_",
+    "fileid_list":["adam50","adam50c20","rrnn","rrnn_sort"]
+  },
+  "visualization":{
+    "model_labels":["adam50","adam50c20","rrnn","rrnn_sort"],
+    "model_colors":["#0F0F0F"],
+    "savedir":"saved_imgs/ntm_vlgiitr",
+    "savefile_common":"ntm_",
+    "baselines":{
+      "filenames":["dnc_grave","lstm_grave"],
+      "base_colors":["lightgray","violet"]
+      }
+  }
+
+}

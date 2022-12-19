@@ -1,0 +1,11 @@
+{
+	"task": "nth_farthest",
+	"controller_size": 200,
+	"memory_units": 8,
+	"memory_unit_size": 256,
+	"num_heads": 4,
+	"seq_width": 16,
+	"input_seq_len": 8,
+	"target_seq_len":-1
+}
+

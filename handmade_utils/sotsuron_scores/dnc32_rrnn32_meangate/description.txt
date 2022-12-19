@@ -1,0 +1,58 @@
+バッチ数へった　半分
+設定は
+{
+  "model": {
+    "entity_size": 90,
+    "hidden_size": 80,
+    "role_size": 20,
+    "init_limit": 0.10,
+    "LN": true,
+    "dnc":{"num_layers":1,"#lstm_hidden":512,
+        "hidden_size":256,
+        "num_hidden_layers":1,
+        "nr_cells":32,
+        "cell_size":64,
+        "read_heads":4,
+        "rrnn_type":1
+    },
+    "relationmod":{"mem_slots":32,
+        "num_heads":4,
+        "mem_params":2048,
+        "num_blocks":1,
+        "forget_bias": 1.0,
+        "input_bias" : 0.0,
+        "attention_mlp_layers" : 2,
+        "rrnn_mlp_size":256,
+        "#":"self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
+        "#head_size":"int(mem_params / (self.numheads * self.memslots))",
+        "#input_size": "self.cell_size"
+    }
+  },
+  "trainer":{
+    "steps": 1000000,
+    "epochs": 500,
+    "batch_size": 250,
+    "validation_step": 200,
+    "logging_step": 50,
+    "use_cuda": true,
+    "patience":5
+  },
+  "data":{
+    "data_path": "./babi/data/en-valid-10k",
+    "task-id": "all",
+    "savescore_dir":"/work/handmade_utils/sotsuron_scores/dnc32_rrnn32_meangate",
+    "filename_common":"task"
+  },
+  "optimizer":{
+    "lr": 0.0006,
+    "beta1": 0.9,
+    "beta2": 0.99,
+    "max_gradient_norm": 5,
+    "warm_up": true,
+    "warm_up_steps": 1,
+    "warm_up_factor": 0.1,
+    "decay": true,
+    "decay_thr": 0.1,
+    "decay_factor": 0.5
+  }
+}
