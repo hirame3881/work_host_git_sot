@@ -20,6 +20,9 @@ from argparse import ArgumentParser
 
 from relational_rnn_general import RelationalMemory
 
+import slackweb
+
+
 parser = ArgumentParser()
 
 # Model parameters.
@@ -43,7 +46,7 @@ mlp_size = 256
 # data params
 num_vectors = 8
 num_dims = 16
-batch_size = 1600
+batch_size = 12000
 num_batches = 6  # set batches per epoch because we are generating data from scratch each time
 num_test_examples = 3200
 
@@ -192,7 +195,7 @@ def accuracy_score(y_pred, y_true):
 ####################
 # Train model
 ####################
-
+a91_flag=False
 for t in range(num_epochs):
     epoch_loss = np.zeros(num_batches)
     epoch_acc = np.zeros(num_batches)
@@ -248,11 +251,16 @@ for t in range(num_epochs):
     test_hist[t] = test_loss
     test_hist_acc[t] = test_acc
 
-    if t % 10 == 0:
-        print("Epoch {} train loss: {}".format(t, loss))
+    if t % 5 == 0:
+        print("Epoch {} batch {} train loss: {}".format(t,t*batch_size*num_batches, loss))
         print("Epoch {} test  loss: {}".format(t, test_loss))
         print("Epoch {} train  acc: {:.2f}".format(t, acc))
         print("Epoch {} test   acc: {:.2f}".format(t, test_acc))
+
+    if acc>0.91 and (not a91_flag):
+        slack = slackweb.Slack(url="https://hooks.slack.com/services/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")
+        slack.notify(text="over 91% !")
+        a91_flag=True
 
 ####################
 # Plot losses
