@@ -1,0 +1,28 @@
+{
+	"task": "babi",
+	"controller_size": 256,
+	"memory_units": 256,
+	"memory_unit_size": 64,
+	"num_heads": 4,
+	"seq_width": -1,
+	"input_seq_len": -1,
+	"target_seq_len":-1,
+"rrnnconfig":{"mem_slots":8,
+        "num_heads":8,
+        "mem_params":,
+        "num_blocks":1,
+        "forget_bias": 1.0,
+        "input_bias" : 0.0,
+        "attention_mlp_layers" : 2,
+        "rrnn_mlp_size":256,
+        "#":"self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
+        "#head_size":"int(mem_params / (self.numheads * self.memslots))",
+        "#input_size": "self.cell_size"
+    },
+"data":{
+    "savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/babi",
+    "filename_common":"",
+    "savefileid_list":["v1228"]
+  }
+}
+

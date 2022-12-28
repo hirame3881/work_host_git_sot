@@ -26,16 +26,19 @@ class AssociativeDataset(Dataset):
         self.seq_len = task_params["seq_len"]
         self.min_item = task_params["min_item"]
         self.max_item = task_params["max_item"]
+        self.numitem="none"
 
     def __len__(self):
         # sequences are generated randomly so this does not matter
         # set a sufficiently large size for data loader to sample mini-batches
         return 65536
-
+    def set_numitem(self):
+        self.numitem = torch.randint(
+            self.min_item, self.max_item, (1,), dtype=torch.long).item()
     def __getitem__(self, idx):
         # idx only acts as a counter while generating batches.
-        num_item = torch.randint(
-            self.min_item, self.max_item, (1,), dtype=torch.long).item()
+        num_item=self.numitem
+
         prob = 0.5 * \
             torch.ones([self.seq_len, self.seq_width], dtype=torch.float64)
         seq = Binomial(1, prob)

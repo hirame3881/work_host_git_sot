@@ -1,0 +1,2 @@
+{"rowAttr": "iter", "rowVal": "bitError", "batch_size": 250, "datetime": "2022-12-28 19:38:39.264148+09:00"}
+0:8.85200023651123

@@ -24,6 +24,8 @@ parser.add_argument('-num_iters', type=int, default=100000,
                     help='number of iterations for training')
 parser.add_argument('-summarize_freq', type=int, default=200,
                     help='iter/freq calculate acc , save score')
+parser.add_argument('-runid', type=int, default=1,
+                    help='same setting/model run count')
 args=parser.parse_args()
 print("infer:",args.infer_type)
 print("sort:",args.sort_flag)
@@ -31,15 +33,19 @@ print("sort:",args.sort_flag)
 #------
 sys.path.append("/work/handmade_utils/sotsuron_scores")
 with __import__('importnb').Notebook(): 
-    from score_store import ScoreStoring
+    from score_store import ScoreStoring,get_dirname
 
 config_file="./ntm/tasks/config_all.json"
 with open(config_file, "r") as fp:
     config = json.load(fp)
-data_config=config["data"]
+task_params = json.load(open(args.task_json))
+rel_config=task_params["rrnnconfig"]
+data_config=task_params["data"]
 
 sys.path.append("/work/handmade_utils/sotsuron_scores")
-scorestoring =ScoreStoring(data_config,fileid_str_list=data_config["savefileid_list"],rowAttr="steps",rowVal="bit error per seq")
+file_description={"rowAttr":"iter","rowVal":"accuracy","batch_size":args.batch_size}
+dir_modelname=get_dirname(args.infer_type,args.sort_flag)
+scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description)
 #------
 batch_size=args.batch_size
 device = torch.device(args.device)
@@ -58,7 +64,7 @@ args.task_json = 'ntm/tasks/ngram.json'
 args.task_json = 'ntm/tasks/prioritysort.json'
 '''
 
-task_params = json.load(open(args.task_json))
+
 num_dims =task_params['seq_width']
 num_vectors =task_params['input_seq_len']
 
@@ -127,12 +133,12 @@ ntm = NTM(input_size=task_params['seq_width'] + task_params['input_seq_len']*3,
           memory_units=task_params['memory_units'],
           memory_unit_size=task_params['memory_unit_size'],
           num_heads=task_params['num_heads'],
-          rel_config=config["model"]["rrnnconfig"],
+          rel_config=rel_config,
           device=device,
           infer_flag=args.infer_type,
           sort_flag=args.sort_flag,
         batch_size=args.batch_size,
-        softmax=True
+        softmax=False
         ).to(device)
 print(ntm)
 total_params = sum(p.numel() for p in ntm.parameters() if p.requires_grad)
@@ -223,12 +229,12 @@ for iter in tqdm(range(args.num_iters)):
         losses = []
         errors = []
         if np.mean(errors)>0.91 and (not a91_flag):
-            slack = slackweb.Slack(url="https://hooks.slack.com/services/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")
+            slack = slackweb.Slack(url=config["slackurl"])
             slack.notify(text="over 91% !")
             a91_flag=True
 
-slack = slackweb.Slack(url="https://hooks.slack.com/services/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")
-slack.notify(text="training done !")
+slack = slackweb.Slack(url=config["slackurl"])
+slack.notify(text="done:" + str(os.path.basename(__file__)) +" "+ dir_modelname + " runid:"+str(args.runid))
 
 # ---saving the model---
 torch.save(ntm.state_dict(), PATH)

@@ -1,2 +1,0 @@
-#steps:bit error per seq
-0:54.0

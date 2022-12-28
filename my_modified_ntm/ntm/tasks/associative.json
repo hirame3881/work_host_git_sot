@@ -7,5 +7,22 @@
 	"seq_width": 6,
 	"seq_len": 3,
 	"min_item": 2,
-	"max_item": 6
+	"max_item": 6,
+"rrnnconfig":{"mem_slots":128,
+        "num_heads":1,
+        "mem_params":2560,
+        "num_blocks":1,
+        "forget_bias": 1.0,
+        "input_bias" : 0.0,
+        "attention_mlp_layers" : 2,
+        "rrnn_mlp_size":128,
+        "#":"self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
+        "#head_size":"int(mem_params / (self.numheads * self.memslots))",
+        "#input_size": "self.cell_size"
+    },
+"data":{
+    "savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/associative",
+    "filename_common":"",
+    "savefileid_list":["v1228"]
+  }
 }

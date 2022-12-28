@@ -1,11 +1,11 @@
 {
   "model": {
-    "entity_size": 90,
-    "hidden_size": 80,
-    "role_size": 20,
-    "init_limit": 0.10,
-    "LN": true,
-    "dnc":{"num_layers":1,"#lstm_hidden":512,
+    "#entity_size": 90,
+    "#hidden_size": 80,
+    "#role_size": 20,
+    "#init_limit": 0.10,
+    "#LN": true,
+    "#dnc":{"num_layers":1,"#lstm_hidden":512,
         "hidden_size":256,
         "num_hidden_layers":1,
         "nr_cells":32,
@@ -13,24 +13,13 @@
         "read_heads":4,
         "rrnn_type":0
     },
-    "rrnnconfig":{"mem_slots":8,
-        "num_heads":8,
-        "mem_params":2048,
-        "num_blocks":1,
-        "forget_bias": 1.0,
-        "input_bias" : 0.0,
-        "attention_mlp_layers" : 2,
-        "rrnn_mlp_size":256,
-        "#":"self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
-        "#head_size":"int(mem_params / (self.numheads * self.memslots))",
-        "#input_size": "self.cell_size"
-    },
-    "gat":{"firstattention_hidden_size":64,
+
+    "#gat":{"firstattention_hidden_size":64,
            "gat_num_heads":4, 
            "gat_dropout":0.6, 
            "leakyrelu_alpha":0.2}
   },
-  "trainer":{
+  "#trainer":{
     "steps": 1000000,
     "epochs": 500,
     "batch_size": 250,
@@ -39,14 +28,14 @@
     "use_cuda": true,
     "patience":5
   },
-  "data":{
+  "#data":{
     "data_path": "./babi/data/en-valid-10k",
     "task-id": "all",
     "savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr",
-    "filename_common":"n-th_",
-    "savefileid_list":["sort_gpu"]
+    "filename_common":"",
+    "savefileid_list":["v1228"]
   },
-  "optimizer":{
+  "#optimizer":{
     "lr": 0.0006,
     "beta1": 0.9,
     "beta2": 0.99,
@@ -57,5 +46,6 @@
     "decay": true,
     "decay_thr": 0.1,
     "decay_factor": 0.5
-  }
+  },
+  "slackurl":"https://hooks.slack.com/services/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"
 }
