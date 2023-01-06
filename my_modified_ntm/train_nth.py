@@ -17,7 +17,7 @@ import slackweb
 
 
 parser = get_parser()
-parser.add_argument('--infer_type', default=0)
+parser.add_argument('--infer_type',type=int, default=0)
 parser.add_argument('--sort_flag', action='store_true')
 parser.add_argument('--device', default="cpu",help="cpu, cuda or int number")
 parser.add_argument('-num_iters', type=int, default=100000,
@@ -42,7 +42,7 @@ task_params = json.load(open(args.task_json))
 rel_config=task_params["rrnnconfig"]
 data_config=task_params["data"]
 
-sys.path.append("/work/handmade_utils/sotsuron_scores")
+#sys.path.append("/work/handmade_utils/sotsuron_scores")
 file_description={"rowAttr":"iter","rowVal":"accuracy","batch_size":args.batch_size}
 dir_modelname=get_dirname(args.infer_type,args.sort_flag)
 scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description)

@@ -20,6 +20,8 @@ from argparse import ArgumentParser
 
 from relational_rnn_general import RelationalMemory
 
+import os,sys
+import json
 import slackweb
 
 
@@ -28,6 +30,7 @@ parser = ArgumentParser()
 # Model parameters.
 parser.add_argument('--cuda', action='store_true',
                     help='use CUDA')
+parser.add_argument('-runid', type=int)
 
 parse_args = parser.parse_args()
 
@@ -37,6 +40,11 @@ if torch.cuda.is_available():
 
 device = torch.device("cuda" if parse_args.cuda else "cpu")
 
+config_file="/work/my_modified_ntm/ntm/tasks/config_all.json"
+with open(config_file, "r") as fp:
+    config = json.load(fp)
+slack = slackweb.Slack(url=config["slackurl"])
+#slack.notify(text="nth start")
 # network params
 learning_rate = 1e-4
 num_epochs = 10000000
@@ -47,8 +55,19 @@ mlp_size = 256
 num_vectors = 8
 num_dims = 16
 batch_size = 12000
-num_batches = 6  # set batches per epoch because we are generating data from scratch each time
+num_batches = 1  # set batches per epoch because we are generating data from scratch each time
+summarize_freq=100
 num_test_examples = 3200
+
+sys.path.append("/work/handmade_utils/sotsuron_scores")
+with __import__('importnb').Notebook(): 
+    from score_store import ScoreStoring,get_dirname
+file_description={"rowAttr":"iter","rowVal":"accuracy_train","batch_size":batch_size}
+dir_modelname="santoro_rrnn"
+savefileid_list=["v1229"]
+data_config={"savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/nth"}
+scorestoring =ScoreStoring(data_config,savefileid_list,dir_modelname,parse_args.runid,file_description)
+
 
 ####################
 # Generate data
@@ -251,16 +270,18 @@ for t in range(num_epochs):
     test_hist[t] = test_loss
     test_hist_acc[t] = test_acc
 
-    if t % 5 == 0:
+    if t % summarize_freq == 0:
         print("Epoch {} batch {} train loss: {}".format(t,t*batch_size*num_batches, loss))
         print("Epoch {} test  loss: {}".format(t, test_loss))
         print("Epoch {} train  acc: {:.2f}".format(t, acc))
+        scorestoring.store(savefileid_list[0],t,acc)
         print("Epoch {} test   acc: {:.2f}".format(t, test_acc))
 
     if acc>0.91 and (not a91_flag):
-        slack = slackweb.Slack(url="https://hooks.slack.com/services/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")
+        
         slack.notify(text="over 91% !")
         a91_flag=True
+        break
 
 ####################
 # Plot losses

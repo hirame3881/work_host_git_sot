@@ -1,0 +1,2 @@
+{"rowAttr": "iter", "rowVal": "accuracy_train", "batch_size": 12000, "datetime": "2022-12-29 16:13:46.811542+09:00"}
+0:0.12741666666666668
