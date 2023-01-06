@@ -214,8 +214,8 @@ for iter in tqdm(range(args.num_iters)):
         losses = []
         errors = []
 
-slack = slackweb.Slack(url=config["slackurl"])
-slack.notify(text="done:" + str(os.path.basename(__file__)) +" "+ dir_modelname + " runid:"+str(args.runid))
+#slack = slackweb.Slack(url=config["slackurl"])
+#slack.notify(text="done:" + str(os.path.basename(__file__)) +" "+ dir_modelname + " runid:"+str(args.runid))
 
 # ---saving the model---
 torch.save(ntm.state_dict(), PATH)
