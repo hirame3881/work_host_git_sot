@@ -108,11 +108,11 @@ class NTMMemory(nn.Module):
         # make weights and write_data sizes same as memory
         weights = weights.view(-1, self.n, 1).expand(self.memory.size())
         data = data.view(-1, 1, self.m).expand(self.memory.size())
-        self.memory = weights * data + (1 - weights) * self.memory
+        #self.memory = weights * data + (1 - weights) * self.memory
         # --(separate erase and add mechanism)
-        # erase = erase.view(-1, 1, self.m).expand(self.memory.size())
-        # self.memory = (1 - weights * erase) * self.memory
-        # self.memory = weights * data + self.memory
+        erase = erase.view(-1, 1, self.m).expand(self.memory.size())
+        self.memory = (1 - weights * erase) * self.memory
+        self.memory = weights * data + self.memory
 
     def reset(self, batch_size=1):
         # self.memory = torch.zeros([batch_size, self.n, self.m])

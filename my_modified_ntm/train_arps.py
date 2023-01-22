@@ -17,6 +17,8 @@ import slackweb
 
 parser = get_parser()
 parser.add_argument('--task_type')
+parser.add_argument('--seq_len', type=int, default=-1,
+                    help='for priority')
 parser.add_argument('--infer_type', type=int,default=0)
 parser.add_argument('--sort_flag', action='store_true')
 parser.add_argument('--device', default="cpu",help="cpu, cuda or int number")
@@ -39,12 +41,20 @@ config_file="./ntm/tasks/config_all.json"
 with open(config_file, "r") as fp:
     config = json.load(fp)
 task_params = json.load(open(args.task_json))
+if args.task_type=="priority" and args.seq_len!=-1:
+    task_params["input_seq_len"]=args.seq_len
+    for idx,_ in enumerate( task_params["data"]["savefileid_list"]):
+        task_params["data"]["savefileid_list"][idx] +="l"+str(task_params["input_seq_len"])
+print("input_seq_len:",task_params["input_seq_len"])
+
 rel_config=task_params["rrnnconfig"]
 #data_config=config["data"]
 data_config=task_params["data"]
 
 sys.path.append("/work/handmade_utils/sotsuron_scores")
 file_description={"rowAttr":"iter","rowVal":"bitError","batch_size":args.batch_size}
+if args.task_type=="priority":
+    file_description["input_seq_len"]=task_params["input_seq_len"]
 dir_modelname=get_dirname(args.infer_type,args.sort_flag)
 scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description)
 #------
@@ -206,11 +216,15 @@ for iter in tqdm(range(args.num_iters)):
 
     # ---logging---
     if iter % args.summarize_freq == 0:
-        print('Iteration: %d\tLoss: %.2f\tError in bits per sequence: %.2f' %
-              (iter, np.mean(losses), np.mean(errors)))
+        errorP20 =(np.mean(errors)/task_params["input_seq_len"])*20
+        print('Iteration: %d\tLoss: %.2f\tError in bits per 20sequence: %.2f' %
+              (iter, np.mean(losses), errorP20))
         #log_value('train_loss', np.mean(losses), iter)
         #log_value('bit_error_per_sequence', np.mean(errors), iter)
-        scorestoring.store(data_config["savefileid_list"][0],iter,np.mean(errors))
+        scorestoring.store(data_config["savefileid_list"][0],iter,errorP20)
+        if  errorP20<1.0:
+            print("error bits per 20 < 1.0")
+            break
         losses = []
         errors = []
 
