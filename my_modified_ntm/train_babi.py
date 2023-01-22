@@ -46,10 +46,12 @@ task_params = json.load(open(args.task_json))
 rel_config=task_params["rrnnconfig"]
 data_config=task_params["data"]
 
-sys.path.append("/work/handmade_utils/sotsuron_scores")
+#sys.path.append("/work/handmade_utils/sotsuron_scores")
 file_description={"rowAttr":"iter","rowVal":"errorrate","batch_size":args.batch_size}
 dir_modelname=get_dirname(args.infer_type,args.sort_flag)
-scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description,babi=True)
+scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description,babi=False)
+
+
 #------
 batch_size=args.batch_size
 device = torch.device(args.device)
@@ -119,7 +121,8 @@ ntm = NTM(input_size=task.vector_size,
 print(ntm)
 total_params = sum(p.numel() for p in ntm.parameters() if p.requires_grad)
 print("Model built, total trainable params: " + str(total_params))
-criterion = mycross_OH_3Dto3D
+###criterion = mycross_OH_3Dto3D
+criterion = nn.CrossEntropyLoss()
 # As the learning rate is task specific, the argument can be moved to json file
 '''
 optimizer = optim.RMSprop(ntm.parameters(),
@@ -155,8 +158,12 @@ for iter in tqdm(range(args.num_iters)):
 
     data_batch,seqlen, m =task.generate_data(batch_size=batch_size,train=True)
     input =torch.tensor(data_batch[0],dtype=torch.float).to(device)
-    target=torch.tensor(data_batch[1],dtype=torch.float).to(device)
-    mask=torch.tensor(m).to(device,dtype=torch.float)
+    ###target=torch.tensor(data_batch[1],dtype=torch.float).to(device)
+    target_np=np.argmax(data_batch[1],axis=2)
+    target=torch.tensor(target_np).to(device)
+    ###mask=torch.tensor(m).to(device,dtype=torch.float)
+    mask=torch.tensor(m==1).to(device,dtype=torch.bool)
+    masked_target1D=torch.masked_select(target,mask[:,:,0])
 
     if iter==1: print("input_size:",input.size(),"target_size:",target.size(),"mask_size:",mask.size())
     ##out = torch.zeros(target.size()).to(device)
@@ -164,14 +171,14 @@ for iter in tqdm(range(args.num_iters)):
     # -------------------------------------------------------------------------
     # loop for other tasks
     # -------------------------------------------------------------------------
-    outs=torch.zeros(target.size()).to(device)
+    outs=torch.zeros(input.size()).to(device) ###target.size()).to(device)
     for i in range(input.size()[1]):##
         # to maintain consistency in dimensions as torch.cat was throwing error
         ##in_data = torch.unsqueeze(input[i], 0)
         in_data = input[:,i,:]##(batch_size,in_feature)になるが、controllerのLSTMCell入力がちょうどこれなので問題なし
         #print(in_data.dtype,outs[:,i,:].dtype)
         outs[:,i,:]=ntm(in_data)
-
+    masked_outs=torch.masked_select(outs,mask).view(-1,task.vector_size)
 
     # -------------------------------------------------------------------------
     # -------------------------------------------------------------------------
@@ -180,15 +187,16 @@ for iter in tqdm(range(args.num_iters)):
 
     # -------------------------------------------------------------------------
 
-    loss = criterion(outs, target)
+    ###loss = criterion(outs, target)
+    loss=criterion( masked_outs,masked_target1D)
     ##loss=torch.mean(loss * mask[:, :, 0])
-    loss =my_masked_mean(loss,mask)
+    ###loss =my_masked_mean(loss,mask)
     losses.append(loss.item())
     loss.backward()
     # clips gradient in the range [-10,10]. Again there is a slight but
     # insignificant deviation from the paper where they are clipped to (-10,10)
     ##nn.utils.clip_grad_value_(ntm.parameters(), 10)
-    nn.utils.clip_grad_norm_(ntm.parameters(), 50)
+    nn.utils.clip_grad_norm_(ntm.parameters(), 1)
     optimizer.step()
 
     ##y_pred = torch.argmax(outs.clone().detach(), dim=2)
@@ -208,7 +216,7 @@ for iter in tqdm(range(args.num_iters)):
     if iter % (args.summarize_freq) == 0 and iter!=0:
         test_losses=[]
         test_errors = []
-        task.test(ntm,batch_size=batch_size,device=device)
+        #task.test(ntm,batch_size=batch_size,device=device)
 
         '''scorestoring.store(data_config["savefileid_list"][0],iter,np.mean(test_errors))
         if np.mean(test_errors)>0.70 and (not a91_flag):
@@ -217,6 +225,7 @@ for iter in tqdm(range(args.num_iters)):
             a91_flag=True'''
     if np.isnan(loss.item()):
         print("nan loss")
+        #outs txt syuturyoku
         break
 
 slack = slackweb.Slack(url=config["slackurl"])

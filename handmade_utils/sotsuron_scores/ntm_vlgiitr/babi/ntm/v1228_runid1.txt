@@ -1,0 +1,1 @@
+{"rowAttr": "iter", "rowVal": "errorrate", "batch_size": 5, "datetime": "2023-01-20 19:21:56.945521+09:00"}
