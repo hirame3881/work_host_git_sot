@@ -49,11 +49,11 @@ slack = slackweb.Slack(url=config["slackurl"])
 learning_rate = 1e-4
 num_epochs = 10000000
 dtype = torch.float
-mlp_size = 256
+mlp_size = 128
 
 # data params
-num_vectors = 8
-num_dims = 16
+num_vectors = 4
+num_dims = 8
 batch_size = 12000
 num_batches = 1  # set batches per epoch because we are generating data from scratch each time
 summarize_freq=100
@@ -64,7 +64,7 @@ with __import__('importnb').Notebook():
     from score_store import ScoreStoring,get_dirname
 file_description={"rowAttr":"iter","rowVal":"accuracy_train","batch_size":batch_size}
 dir_modelname="santoro_rrnn"
-savefileid_list=["v1229"]
+savefileid_list=["v0111quarter"]
 data_config={"savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/nth"}
 scorestoring =ScoreStoring(data_config,savefileid_list,dir_modelname,parse_args.runid,file_description)
 
@@ -125,9 +125,9 @@ X_test, y_test = get_examples(num_test_examples, num_vectors, num_dims, device)
 
 class RMCArguments:
     def __init__(self):
-        self.memslots = 8
-        self.numheads = 8
-        self.headsize = int(2048 / (self.numheads * self.memslots))
+        self.memslots = 4
+        self.numheads = 4
+        self.headsize = int(512 / (self.numheads * self.memslots))
         self.input_size = input_size  # dimensions per timestep
         self.numblocks = 1
         self.forgetbias = 1.
@@ -272,10 +272,10 @@ for t in range(num_epochs):
 
     if t % summarize_freq == 0:
         print("Epoch {} batch {} train loss: {}".format(t,t*batch_size*num_batches, loss))
-        print("Epoch {} test  loss: {}".format(t, test_loss))
+        #print("Epoch {} test  loss: {}".format(t, test_loss))
         print("Epoch {} train  acc: {:.2f}".format(t, acc))
         scorestoring.store(savefileid_list[0],t,acc)
-        print("Epoch {} test   acc: {:.2f}".format(t, test_acc))
+        #print("Epoch {} test   acc: {:.2f}".format(t, test_acc))
 
     if acc>0.91 and (not a91_flag):
         
