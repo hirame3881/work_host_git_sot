@@ -4,8 +4,8 @@ command="python3 train_arps.py --task_type priority -task_json ntm/tasks/priorit
 for runid in `seq 1 2`
 do
     #$command -runid $runid --infer_type 1 --sort_flag
-    $command --seq_len 30 -runid $runid
-    $command --seq_len 30 -runid $runid --infer_type 1
+    $command --seq_len 40 -runid $runid
+    $command --seq_len 40 -runid $runid --infer_type 1
 done
 
 #file="hello.py"
