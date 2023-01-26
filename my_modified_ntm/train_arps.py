@@ -45,7 +45,7 @@ if args.task_type=="priority" and args.seq_len!=-1:
     task_params["input_seq_len"]=args.seq_len
     for idx,_ in enumerate( task_params["data"]["savefileid_list"]):
         task_params["data"]["savefileid_list"][idx] +="l"+str(task_params["input_seq_len"])
-print("input_seq_len:",task_params["input_seq_len"])
+if args.task_type=="priority":print("input_seq_len:",task_params["input_seq_len"])
 
 rel_config=task_params["rrnnconfig"]
 #data_config=config["data"]
@@ -216,14 +216,15 @@ for iter in tqdm(range(args.num_iters)):
 
     # ---logging---
     if iter % args.summarize_freq == 0:
-        errorP20 =(np.mean(errors)/task_params["input_seq_len"])*20
-        print('Iteration: %d\tLoss: %.2f\tError in bits per 20sequence: %.2f' %
-              (iter, np.mean(losses), errorP20))
+        #errorP20 =(np.mean(errors)/task_params["input_seq_len"])*20
+        merror=np.mean(errors)
+        print('Iteration: %d\tLoss: %.2f\tError in bits per sequence: %.2f' %
+              (iter, np.mean(losses), merror))
         #log_value('train_loss', np.mean(losses), iter)
         #log_value('bit_error_per_sequence', np.mean(errors), iter)
-        scorestoring.store(data_config["savefileid_list"][0],iter,errorP20)
-        if  errorP20<1.0:
-            print("error bits per 20 < 1.0")
+        scorestoring.store(data_config["savefileid_list"][0],iter,merror)
+        if  merror<1.0:
+            print("error bits per seq < 1.0")
             break
         losses = []
         errors = []
