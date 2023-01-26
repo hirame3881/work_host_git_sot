@@ -12,7 +12,7 @@ def get_parser():
                         help='path to log metrics')
     parser.add_argument('-save_dir', default='saved_models/',
                         help='path to file with final model parameters')
-    parser.add_argument('-batch_size', type=int, default=128,
+    parser.add_argument('-batch_size', type=int, default=160,
                         help='batch size of input sequence during training')
     parser.add_argument('-clip_grad', type=int, default=10,
                         help='clip gradient')

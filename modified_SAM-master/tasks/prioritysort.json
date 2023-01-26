@@ -1,0 +1,21 @@
+{
+	"task": "prioritysort",
+	"controller_size": 256,
+	"memory_units": 128,
+	"memory_unit_size": 32,
+	"num_heads": 5,
+	"num_slot": 8,
+	"slot_size": 20,
+	"rel_size": 20,
+	"seq_width": 8,
+	"input_seq_len": 20,
+	"target_seq_len": 16,
+	"iter": 50000,
+	"data": {
+		"savescore_dir": "/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/priority",
+		"filename_common": "",
+		"savefileid_list": [
+			"m400rm400x8"
+		]
+	}
+}

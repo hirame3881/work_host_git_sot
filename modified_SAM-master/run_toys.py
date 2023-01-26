@@ -2,7 +2,7 @@ import json
 from tqdm import tqdm
 import numpy as np
 import random
-import os
+import os,sys
 import torch
 from torch import nn, optim
 from tensorboard_logger import configure, log_value
@@ -13,11 +13,17 @@ from datasets import NFarDataset, CopyDataset, PrioritySortDataset, RARDataset
 
 from args import get_parser
 
+parser=get_parser()
 
+parser.add_argument('--seq_len', type=int, default=-1,
+                    help='for priority')
+parser.add_argument('-runid', type=int, default=1,
+                    help='same setting/model run count')
+args = parser.parse_args()
 
-args = get_parser().parse_args()
-
-
+sys.path.append("/work/handmade_utils/sotsuron_scores")
+with __import__('importnb').Notebook(): 
+    from score_store import ScoreStoring,get_dirname
 
 # ----------------------------------------------------------------------------
 # -- initialize datasets, model, criterion and optimizer
@@ -35,7 +41,21 @@ log_dir = os.path.join(log_dir, args.model_name)
 if not os.path.isdir(log_dir):
     os.mkdir(log_dir)
 
+if args.seq_len!=-1:
+    task_params["input_seq_len"]=args.seq_len
+    for idx,_ in enumerate( task_params["data"]["savefileid_list"]):
+        task_params["data"]["savefileid_list"][idx] +="l"+str(task_params["input_seq_len"])
+print("input_seq_len:",task_params["input_seq_len"])
 
+data_config=task_params["data"]
+#sys.path.append("/work/handmade_utils/sotsuron_scores")
+file_description={"rowAttr":"iter","rowVal":"bitError","batch_size":args.batch_size}
+##if args.task_type=="priority":
+file_description["input_seq_len"]=task_params["input_seq_len"]
+##dir_modelname=get_dirname(args.infer_type,args.sort_flag)
+dir_modelname="SAM"
+scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description)
+#------
 
 save_dir = os.path.join(args.save_dir,args.task_name+args.model_name)
 if not os.path.isdir(save_dir):
@@ -247,6 +267,7 @@ for iter in tqdm(range(num_iter)):
         print('Iteration: %d\tLoss: %.2f\tError in bits per sequence: %.2f' %
               (iter, np.mean(losses), np.mean(errors)))
         mloss = np.mean(losses)
+        scorestoring.store(data_config["savefileid_list"][0],iter,np.mean(errors))
 
         if mloss<best_loss:
             # ---saving the model---
@@ -258,6 +279,9 @@ for iter in tqdm(range(num_iter)):
         losses = []
         errors = []
         loss_pls = []
+        if  np.mean(errors)<1.0:
+            print("error bits  < 1.0")
+            break
 
 
 

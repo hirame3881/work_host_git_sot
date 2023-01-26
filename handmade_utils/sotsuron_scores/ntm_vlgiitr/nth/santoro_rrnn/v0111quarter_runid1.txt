@@ -1,4 +1,4 @@
-{"rowAttr": "iter", "rowVal": "accuracy_train", "batch_size": 12000, "datetime": "2023-01-13 12:21:43.264098+09:00"}
+{"rowAttr": "iter", "rowVal": "accuracy", "batch_size": 12000, "datetime": "2023-01-13 12:21:43.264098+09:00"}
 0:0.24966666666666668
 100:0.49316666666666664
 200:0.4990833333333333
