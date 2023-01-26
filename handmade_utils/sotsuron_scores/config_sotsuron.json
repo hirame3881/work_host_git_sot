@@ -23,18 +23,20 @@
   },
   "read_ScoreStoring":{
   "##dirs":["SAM+dnc_model","simplerrnn_matrixinput"],
-    "read_directories": ["ntm_vlgiitr"],
-    "filename_common":"ntm_",
+    "read_directories": ["SAM+dnc_model"],
+    "filename_common":"task",
     "fileid_list":["adam50","adam50c20","rrnn","rrnn_sort"]
   },
   "visualization":{
     "model_labels":["adam50","adam50c20","rrnn","rrnn_sort"],
-    "model_colors":["#0F0F0F"],
+    "model_colors":["red"],
     "savedir":"saved_imgs/ntm_vlgiitr",
     "savefile_common":"ntm_",
     "baselines":{
-      "filenames":["dnc_grave","lstm_grave"],
-      "base_colors":["lightgray","violet"]
+      "#filenames":["dnc_grave","lstm_grave"],
+      "#base_colors":["lightgray","violet"],
+      "filenames":["lstm_grave"],
+      "base_colors":["lime"]
       }
   }
 

@@ -44,7 +44,6 @@ class NTM(nn.Module):
                 input_size + num_heads * memory_unit_size, controller_size, output_size,
                 read_data_size=controller_size + num_heads * memory_unit_size,
                 device=device)
-
         if self.infer_flag:
             ##self.testlayer=nn.Linear(memory_unit_size*(memory_units+1),self.rrnn_mlp_out_size)
             self.infer_mod=RelationalMemory(mem_slots=rel_config["mem_slots"],

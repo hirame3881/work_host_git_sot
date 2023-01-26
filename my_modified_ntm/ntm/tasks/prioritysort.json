@@ -1,27 +1,30 @@
 {
-	"task": "prioritysort",
-	"controller_size": 200,
-	"memory_units": 128,
-	"memory_unit_size": 20,
-	"num_heads": 5,
-	"seq_width": 8,
-	"input_seq_len": 20,
-	"target_seq_len": 16,
-"rrnnconfig":{"mem_slots":128,
-        "num_heads":5,
-        "mem_params":2560,
-        "num_blocks":1,
-        "forget_bias": 1.0,
-        "input_bias" : 0.0,
-        "attention_mlp_layers" : 2,
-        "rrnn_mlp_size":128,
-        "#":"self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
-        "#head_size":"int(mem_params / (self.numheads * self.memslots))",
-        "#input_size": "self.cell_size"
-    },
-"data":{
-    "savescore_dir":"/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/priority",
-    "filename_common":"",
-    "savefileid_list":["v1228"]
+  "task": "prioritysort",
+  "controller_size": 200,
+  "memory_units": 20,
+  "memory_unit_size": 20,
+  "num_heads": 5,
+  "seq_width": 8,
+  "input_seq_len": 20,
+  "target_seq_len": 16,
+  "rrnnconfig": {
+    "mem_slots": 20,
+    "num_heads": 5,
+    "mem_params": 400,
+    "num_blocks": 1,
+    "forget_bias": 1.0,
+    "input_bias": 0.0,
+    "attention_mlp_layers": 2,
+    "rrnn_mlp_size": 128,
+    "#": "self.clip = 0.1,gate_style='unit', attention_mlp_layers=2, key_size=None,",
+    "#head_size": "int(mem_params / (self.numheads * self.memslots))",
+    "#input_size": "self.cell_size"
+  },
+  "data": {
+    "savescore_dir": "/work/handmade_utils/sotsuron_scores/ntm_vlgiitr/priority",
+    "filename_common": "",
+    "savefileid_list": [
+      "m20"
+    ]
   }
 }

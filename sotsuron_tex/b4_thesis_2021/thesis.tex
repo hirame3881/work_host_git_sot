@@ -1,0 +1,209 @@
+\RequirePackage[hyphens]{url}
+
+\documentclass[final,a4j,12pt]{jreport}
+
+% 新しいfontの定義？ なんだろうこれ
+\newfont {\boldmathl}{cmmib10 scaled\magstep1}
+
+% 命令の定義{命令の名前}[引数の個数]
+% https://qiita.com/zr_tex8r/items/5067307890d36c0e4882
+
+% \bmを文章中でも使えるように？
+\newcommand{\bm}[1]{\mbox{\boldmathl #1}}
+
+% smashは高さを潰す？よくわからん
+\newcommand{\lw}[1]{\smash{\lower2.0ex\hbox{#1}}}
+
+% マルチカラムを使うときに必要(だと思う)
+\usepackage{multicol}
+
+% 数式系を使うときに必要(だと思う)
+\usepackage{amsmath,amssymb}
+
+% これを入れておくと画像等の位置指定をするときに強制的にその場所へ置きたい場合[H]を指定できる
+\usepackage{here}
+
+% 数式中でベクトルを太字で表現するときに必要
+\usepackage{bm}
+
+% 画像の読み込みに必要
+\usepackage[dvipdfmx]{graphicx}
+
+% 各種記号
+\usepackage{textcomp}
+
+% 部分的に縦書きをするときに必要
+\usepackage{plext}
+
+% 番号付き箇条書き(必要なんだっけ？)
+\usepackage{enumerate}
+
+% eps形式でもgraphicxを使うのでは？
+\usepackage{epsfig}
+
+% コメントアウト環境を使うために必要(必要性が微妙そう？)
+\usepackage{comment}
+
+% 長い表を作るときに必要
+\usepackage{longtable}
+
+\usepackage{silence}
+% Disable all warnings issued by latex starting with "You have..."
+\WarningFilter{latex}{You have requested package}
+
+% Japanese Tate Yoko Gosic Minchoの略らしい
+% つまり日本語のゴシック、明朝を縦横で使いたいときのパッケージ？
+\usepackage{./stylefile/jtygm}
+
+% 参考文献用？ コメントアウトしているのはどういうことだろう
+% \usepackage{./stylefile/cite}
+
+% 日本語文字と英字が2:1の幅になるverbatimライクな環境 だそうです
+% http://konoyonohana.blog.fc2.com/blog-entry-221.html
+% \usepackage{./stylefile/jverb}
+
+% hereってえー、これ上のhereと絶対被ってるでしょ
+% \usepackage{./stylefile/here}
+
+% 調べても何も出てこない 何？
+% ファイルの中身を見たところ卒論用のスタイルファイルだそうです
+\usepackage{./stylefile/bpaper}
+
+% epsファイルを使うものらしい graphicxで良くない？ コメントアウトされてるしなぁ
+% \usepackage{./stylefile/epsbox}
+
+% ページのヘッダーを作るものっぽい
+\usepackage{./stylefile/fancyheadings}
+
+% 表の中で斜線を引くためのもの
+% \usepackage{./stylefile/slashbox}
+
+% 並べた図に異なる見出しを付ける
+% \usepackage{./stylefile/subfigure}
+
+% 参考文献の管理用？ よくわからない
+\usepackage[backend=bibtex, style=numeric, sorting=none]{biblatex}
+
+% 文字の後にスペースを入れない，という特別扱いをする文字のリストに"'"を追加する
+% よくわからないけどbiblatexを使う場合には入れておいた方が良さそう
+% https://oku.edu.mie-u.ac.jp/tex/mod/forum/discuss.php?d=2313
+\DeclarePrefChars{'-}
+
+% referenceの参照へのパスだろう
+% わざわざディレクトリを分ける意味があるのかはわからないが
+\addbibresource{./reference/reference.bib}
+
+% 参考文献出力スタイル
+% \bibliographystyle{junsrt}
+
+% 置換マクロらしい
+% \genfrac{開き括弧}{閉じ括弧}{分数の横棒の太さ}{数式スタイル}{上}{下}
+% これ定義する意味あるのか？
+\def\frac#1#2{\genfrac{}{}{}{}{\;#1\;}{\;#2\;}}
+\def\dfrac#1#2{\genfrac{}{}{}{0}{\;#1\;}{\;#2\;}}
+\def\tfrac#1#2{\genfrac{}{}{}{1}{\;#1\;}{\;#2\;}}
+\def\sfrac#1#2{\genfrac{}{}{}{2}{\;#1\;}{\;#2\;}}
+\def\ssfrac#1#2{\genfrac{}{}{}{3}{\;#1\;}{\;#2\;}}
+
+% いろいろできる表
+\usepackage{tabularx}
+% これらは何
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
+
+% URLをそのまま書くとチルダとかが無視されるので\url{http://~~}などと書く
+\usepackage{url}
+% \renewcommand{\url}{\begingroup \def\UrlLeft{}\def\UrlRight{}\urlstyle{rm}\Url}
+\PassOptionsToPackage{hyphens}{url}
+
+% 数式とかで使うのか
+\def\so{.\raisebox{1ex}{.}.\quad}
+% これ三点のこと？ それはamsmathがあれば使えそうだけど
+\def\because{\raisebox{1ex}{.}.\raisebox{1ex}{.}\quad}
+
+% 超いらなそう……
+\def\Omicron{O}
+\def\omicron{o}
+
+% 微分記号ですか dy/dxみたいな
+\newcommand{\pdif}[2]{\frac{\partial #1}{\partial #2}}
+
+% 見出し番号の深さを6までに指定
+\setcounter{secnumdepth}{6}
+
+% プリアンブルの定義・再定義の開始に用いる
+% 特に"@"を含むものについて？
+\makeatletter
+
+% subsubsubsectionを定義しているのか
+\newcommand{\subsubsubsection}{\@startsection{paragraph}{4}{\z@}
+  {1.5\Cvs \@plus.5\Cdp \@minus.2\Cdp}
+  {.5\Cvs \@plus.3\Cdp}
+  {\reset@font\normalsize\sffamily}
+}
+
+% argmaxとargminの定義
+\newcommand{\argmax}{\mathop{\rm arg~max}\limits}
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+
+% 複数行を枠で囲むため
+\usepackage{ascmac}
+
+% pandas.DataFrame.to_latexのため
+\usepackage{booktabs}
+
+% for 'subtable' environment
+\usepackage{subcaption}
+
+% これはエイリアスっぽい
+\def\bs#1{\boldsymbol{#1}}
+\def\quot#1{``#1''}
+\def\ggn{Google {\it N}-gram}
+
+% ページ上部のマージン
+\addtolength{\topmargin}{-15mm}
+% ページ左側のマージン
+\addtolength{\oddsidemargin}{-15mm}
+
+% ここから文書
+\begin{document}
+\begin{titlepage}
+\thesis
+{関係推論能力を有する\\Neural Turing Machine}
+{ .}
+{萩原 将文 教授}
+% {杉本 麻樹 教授}
+{4}
+{学籍番号 61913674}
+{東明 鴻希}
+\end{titlepage}
+\pagenumbering{roman}
+
+% 目次
+\contents
+
+\pagenumbering{arabic}
+
+\input{./document/0-abstract}
+\input{./document/1-introduction}
+\input{./document/2-related}
+\input{./document/3-method}
+\input{./document/4-experiment}
+\input{./document/5-conclusion}
+\input{./document/6-acknowledgement}
+
+% \addcontentsline{toc}{chapter}{参考文献}
+\newpage
+\pagestyle{fancyplain}\lfoot{}\cfoot{\thepage}\rhead{}
+\lhead{\small \gt 参考文献~~}\chead{} \rhead{}
+\addcontentsline{toc}{chapter}{参考文献}
+\printbibliography[title=参考文献]
+
+\appendix
+
+% 付録はa, b, c,と見出しを付けていく
+\input{./document/appendixa}
+\input{./document/appendixb}
+\input{./document/appendixc}
+\input{./document/appendixd}
+\end{document}

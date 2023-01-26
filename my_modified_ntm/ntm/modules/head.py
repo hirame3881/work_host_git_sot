@@ -20,7 +20,7 @@ class NTMHead(nn.Module):
         self.shift_weighting_fc = nn.Linear(controller_size, 3)
         self.sharpen_factor_fc = nn.Linear(controller_size, 1)
         # --(optional : for separation of add and erase mechanism)
-        # self.erase_weight_fc = nn.Linear(controller_size, key_size)
+        self.erase_weight_fc = nn.Linear(controller_size, key_size)
 
         # fc layer to produce write data. data vector length=key_size
         self.write_data_fc = nn.Linear(controller_size, key_size)
@@ -72,7 +72,7 @@ class NTMHead(nn.Module):
         # here the sharpening factor is less than 1 whereas as required in the
         # paper it should be greater than 1. hence adding 1.
         y = 1 + F.softplus(self.sharpen_factor_fc(controller_state))
-        # e = F.sigmoid(self.erase_weight_fc(controller_state))  # erase vector
+        e = F.sigmoid(self.erase_weight_fc(controller_state))  # erase vector
         a = self.write_data_fc(controller_state)  # add vector
 
         content_weights = memory.content_addressing(key, b)
@@ -88,8 +88,8 @@ class NTMHead(nn.Module):
         if self.mode == 'r':
             data = memory.read(current_weights)
         elif self.mode == 'w':
-            # memory.write(current_weights, a, e)
-            memory.write(current_weights, a)
+            memory.write(current_weights, a, e)
+            #memory.write(current_weights, a)
         else:
             raise ValueError("mode must be read ('r') or write('w')")
         return current_weights, data,a##
@@ -114,7 +114,7 @@ class NTMHead(nn.Module):
         nn.init.xavier_uniform_(self.shift_weighting_fc.weight, gain=1.4)
         nn.init.xavier_uniform_(self.sharpen_factor_fc.weight, gain=1.4)
         nn.init.xavier_uniform_(self.write_data_fc.weight, gain=1.4)
-        # nn.init.xavier_uniform_(self.erase_weight_fc.weight, gain=1.4)
+        nn.init.xavier_uniform_(self.erase_weight_fc.weight, gain=1.4)
 
         # nn.init.kaiming_uniform_(self.key_strength_fc.weight)
         # nn.init.kaiming_uniform_(self.interpolation_gate_fc.weight)
@@ -129,4 +129,4 @@ class NTMHead(nn.Module):
         nn.init.normal_(self.shift_weighting_fc.bias, std=0.01)
         nn.init.normal_(self.sharpen_factor_fc.bias, std=0.01)
         nn.init.normal_(self.write_data_fc.bias, std=0.01)
-        # nn.init.normal_(self.erase_weight_fc.bias, std=0.01)
+        nn.init.normal_(self.erase_weight_fc.bias, std=0.01)

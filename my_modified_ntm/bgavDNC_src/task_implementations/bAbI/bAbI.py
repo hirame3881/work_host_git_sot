@@ -188,6 +188,7 @@ class bAbITask(Task):
         :param batch_size:
         :return:
         """
+        ntm.reset(batch_size=batch_size)
 
         num_passed_tasks = 0
         num_tasks = len(self.x_test_stories)
@@ -198,7 +199,7 @@ class bAbITask(Task):
             correct_questions = 0
             total_questions = 0
             num_stories = len(inp[1])
-            num_stories = 30
+            #num_stories = 30
 
             """
             Processing each story with other batch - 1 stories. Stupid hack because I can't have variable batch 
