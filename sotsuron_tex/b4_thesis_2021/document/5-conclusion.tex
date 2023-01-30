@@ -2,6 +2,8 @@
 本論文では
 
 記法メモ\\
+test\cite{babi} \cite{memory_net} \cite{ntm} \cite{dnc} \cite{cslm} \cite{rrnn} \cite{simple_rel}
+\cite{sam} \cite{gat} \cite{working2mem}
 Wavenet\cite{oord2016wavenet}は
 音声波形を時系列データとして自己回帰モデルで学習することによって，人間の声のような自然な音声を生成することができる．
 時点$t$における観測値を$x_t$，$\bm{x} = \left\{ x_1, ..., x_T \right\}$を観測値の全体集合とする．このとき，波形の同時確率は 条件付き確率の積として
@@ -11,6 +13,14 @@ Wavenet\cite{oord2016wavenet}は
 \end{equation}
 
 つまり，$x_t$は前時点の全てにおけるサンプルに条件づけられる．
+
+図\ref{fig:priority_rrnn_m20l20}
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/priority/rrnn_m20l20.png}
+	\caption{NTMおよび提案ネットワークの学習曲線(入力長20)}
+	\label{fig:priority_rrnn_m20l20}
+\end{figure}
 
 図\ref{fig:ccl}に因果的畳み込み層のスタックを示す．
 

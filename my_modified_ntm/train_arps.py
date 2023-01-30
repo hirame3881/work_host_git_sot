@@ -21,6 +21,7 @@ parser.add_argument('--seq_len', type=int, default=-1,
                     help='for priority')
 parser.add_argument('--infer_type', type=int,default=0)
 parser.add_argument('--sort_flag', action='store_true')
+parser.add_argument('--mI_supple_type', type=int,default=0)
 parser.add_argument('--device', default="cpu",help="cpu, cuda or int number")
 parser.add_argument('-num_iters', type=int, default=100000,
                     help='number of iterations for training')
@@ -31,7 +32,7 @@ parser.add_argument('-runid', type=int, default=1,
 args=parser.parse_args()
 print("infer:",args.infer_type)
 print("sort:",args.sort_flag)
-
+print("supple:",args.mI_supple_type)
 #------
 sys.path.append("/work/handmade_utils/sotsuron_scores")
 with __import__('importnb').Notebook(): 
@@ -55,7 +56,7 @@ sys.path.append("/work/handmade_utils/sotsuron_scores")
 file_description={"rowAttr":"iter","rowVal":"bitError","batch_size":args.batch_size}
 if args.task_type=="priority":
     file_description["input_seq_len"]=task_params["input_seq_len"]
-dir_modelname=get_dirname(args.infer_type,args.sort_flag)
+dir_modelname=get_dirname(args.infer_type,args.sort_flag,mI_supple_type =args.mI_supple_type)
 scorestoring =ScoreStoring(data_config,data_config["savefileid_list"],dir_modelname,args.runid,file_description)
 #------
 batch_size=args.batch_size
@@ -110,9 +111,10 @@ ntm = NTM(input_size=ntm_input_size,
           device=device,
           infer_flag=args.infer_type,
           sort_flag=args.sort_flag,
-        batch_size=args.batch_size
+        batch_size=args.batch_size,
+        supple_type=args.mI_supple_type
         ).to(device)
-print(ntm)
+###print(ntm)
 total_params = sum(p.numel() for p in ntm.parameters() if p.requires_grad)
 print("Model built, total trainable params: " + str(total_params))
 criterion = nn.BCELoss()
