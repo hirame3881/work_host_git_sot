@@ -43,33 +43,32 @@ $M_t(i)$は$M_t$のi行目を表す。書き込みは式\ref{eq:ntm_forg}によ�
 \end{equation}
 
 \subsection{アドレス指定操作}
-書き込み重み$w^w_t$は2つの異なるコンセプトに基づいて算出された重みから計算される。
+読み書きの重み$w_t$は2つの異なるコンセプトに基づいて算出された重みから計算される。
 類似するメモリ内容を参照するコンテンツベースの重み$w^c_t$と,メモリの各行を位置によって役割を分ける位置ベースの重み$s_t$である。
 アドレス指定操作の中で用いられる$k_t$,$\beta_t$,$s_t$,$g_t$,$\gamma_t$はコントローラ出力$h_t$からの変換で計算される。
 
-はじめにコンテンツベースの重み$w^c_t$は式\ref{eq:w_content}に示すように,書き込みベクトル$k_t$とメモリ各行の類似度に基づいて計算される。
+はじめにコンテンツベースの重み$w^c_t$は式\ref{eq:w_content}に示すように,キーベクトル$k_t$とメモリ各行の類似度に基づいて計算される。
 \begin{equation} \label{eq:w_content}
 	w^c_t(i) =\frac{\exp(\beta_tK\left[k_t,M_t(i)\right] ) }{\sum_j\exp(\beta_tK\left[k_t,M_t(j)\right] )}  
 \end{equation}
-書き込み強度$\beta_t$は正の値を取り,$K[.,.]$はコサイン類似度の計算を表す。
-$w^c_t$と前の時間ステップでの書き込み重み$w^w_{t-1}$を式\ref{eq:w_interp}によって補間し、$w^g_t$を得る。
+キー強度$\beta_t$は正の値を取り,$K[.,.]$はコサイン類似度の計算を表す。
+$w^c_t$と前の時間ステップでの重み$w_{t-1}$を式\ref{eq:w_interp}によって補間し、$w^g_t$を得る。
 \begin{equation} \label{eq:w_interp}
 	w^g_t(i) = g_t w^c_t+(1-g_t)w^w_{t-1}
 \end{equation}
 $g_t$は(0,1)の範囲にあるスカラー値である。
 
-次に位置ベースのアドレス指定
-畳み込みに
+次にこの重みと位置ベースの重み$s_t$の畳み込み計算を式\ref{eq:w_shift}行う。
+この畳み込みは式\ref{eq:w_interp}で注目した場所からの位置のシフトを表現している。
+例えば前の時間ステップで書き込んだ位置の下に書き込み位置をずらしたり、類似した項目の隣の情報を読み出す機能を実現する。
 \begin{equation} \label{eq:w_shift}
 	\tilde{w_t}(i) = \sum_{j=0}^{N-1}w^g_t(j)s_t(i-j)
 \end{equation}
 
-最後に式\ref{eq:w_sharp}により重みをシャープにする。
-
+ここまでの操作で計算されたアテンション係数では重みが複数の位置に分散し,内容が拡散してしまう可能性がある。最後に式\ref{eq:w_sharp}を適用して重みをシャープにし,ヘッドが作用するメモリ行を限定する。
 \begin{equation} \label{eq:w_sharp}
 	w_t(i) = \frac{\tilde{w_t}(i)^{\gamma_t}}{\sum_j\tilde{w_t}(j)^{\gamma_t}}
 \end{equation}
-
 
 \section{Relational Memory Core}
 関係メモリのベースとして使用した、\cite{rrnn}で提案されたRMCを説明する。RMCの構造を図\ref{fig:rmc}に示す。
